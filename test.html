@@ -1,1497 +1,451 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeHub - 웹 개발 플레이그라운드</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #0d1117;
-            color: #e6edf3;
-            height: 100vh;
-            overflow: hidden;
-        }
-        
-        .header {
-            background: #161b22;
-            border-bottom: 1px solid #30363d;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #f0f6fc;
-        }
-        
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #7c3aed, #3b82f6);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        
-        .btn {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #f0f6fc;
-            padding: 6px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .btn:hover {
-            background: #30363d;
-            border-color: #8b949e;
-        }
-        
-        .btn-primary {
-            background: #238636;
-            border-color: #238636;
-        }
-        
-        .btn-primary:hover {
-            background: #2ea043;
-            border-color: #2ea043;
-        }
-        
-        .main-container {
-            display: flex;
-            height: calc(100vh - 60px);
-        }
-        
-        .sidebar {
-            width: 280px;
-            background: #0d1117;
-            border-right: 1px solid #30363d;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .file-explorer {
-            padding: 16px;
-            border-bottom: 1px solid #30363d;
-        }
-        
-        .explorer-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #f0f6fc;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .file-list {
-            list-style: none;
-        }
-        
-        .file-item {
-            padding: 6px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.2s;
-        }
-        
-        .file-item:hover {
-            background: #21262d;
-        }
-        
-        .file-item.active {
-            background: #1f6feb;
-            color: #ffffff;
-        }
-        
-        .file-icon {
-            width: 16px;
-            height: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .templates {
-            padding: 16px;
-            flex: 1;
-        }
-        
-        .templates-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #f0f6fc;
-            margin-bottom: 12px;
-        }
-        
-        .template-item {
-            padding: 12px;
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .template-item:hover {
-            border-color: #8b949e;
-            background: #21262d;
-        }
-        
-        .template-name {
-            font-weight: 500;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-        
-        .template-desc {
-            font-size: 12px;
-            color: #8b949e;
-        }
-        
-        .editor-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .tabs {
-            background: #161b22;
-            border-bottom: 1px solid #30363d;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            min-height: 48px;
-        }
-        
-        .tab {
-            padding: 8px 16px;
-            background: transparent;
-            border: none;
-            color: #8b949e;
-            font-size: 14px;
-            cursor: pointer;
-            border-radius: 6px 6px 0 0;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .tab.active {
-            background: #0d1117;
-            color: #f0f6fc;
-            border-bottom: 2px solid #1f6feb;
-        }
-        
-        .tab:hover:not(.active) {
-            background: #21262d;
-            color: #f0f6fc;
-        }
-        
-        .editor-panes {
-            flex: 1;
-            display: flex;
-        }
-        
-        .editor-pane {
-            flex: 1;
-            display: none;
-            flex-direction: column;
-        }
-        
-        .editor-pane.active {
-            display: flex;
-        }
-        
-        .code-editor {
-            flex: 1;
-            background: #0d1117;
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            border: none;
-            outline: none;
-            resize: none;
-            padding: 20px;
-            color: #e6edf3;
-            tab-size: 2;
-        }
-        
-        .code-editor::placeholder {
-            color: #6e7681;
-        }
-        
-        .preview-container {
-            width: 50%;
-            background: #ffffff;
-            border-left: 1px solid #30363d;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .preview-header {
-            background: #f6f8fa;
-            border-bottom: 1px solid #d0d7de;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .preview-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #24292f;
-        }
-        
-        .preview-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .preview-btn {
-            background: #ffffff;
-            border: 1px solid #d0d7de;
-            color: #24292f;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .preview-btn:hover {
-            background: #f3f4f6;
-        }
-        
-        .preview-frame {
-            flex: 1;
-            border: none;
-            background: #ffffff;
-        }
-        
-        .status-bar {
-            background: #161b22;
-            border-top: 1px solid #30363d;
-            padding: 6px 16px;
-            font-size: 12px;
-            color: #8b949e;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .line-numbers {
-            background: #0d1117;
-            color: #6e7681;
-            padding: 20px 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            text-align: right;
-            border-right: 1px solid #21262d;
-            user-select: none;
-            min-width: 50px;
-        }
-        
-        .editor-with-numbers {
-            display: flex;
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 240px;
-            }
-            
-            .preview-container {
-                display: none;
-            }
-            
-            .main-container {
-                flex-direction: column;
-            }
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CodeHub - 웹 개발 플레이그라운드</title>
+<style>
+/* ----------------- 기본 레이아웃 ----------------- */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--panel:#161b22;--muted:#8b949e;--accent:#1f6feb;--card:#0b1220;--text:#e6edf3
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Inter,system-ui,Arial;background:var(--bg);color:var(--text);height:100vh;overflow:hidden}
+
+/* header */
+.header{background:var(--panel);border-bottom:1px solid #30363d;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 3px rgba(0,0,0,0.12)}
+.logo{display:flex;align-items:center;gap:12px;font-size:1.2rem;font-weight:600;color:#f0f6fc}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#3b82f6);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+
+/* header actions */
+.header-actions{display:flex;gap:12px;align-items:center}
+.btn{background:#21262d;border:1px solid #30363d;color:var(--text);padding:6px 16px;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn:hover{background:#30363d;border-color:#8b949e}
+.btn-primary{background:#238636;border-color:#238636}
+.btn-primary:hover{background:#2ea043;border-color:#2ea043}
+
+/* main layout */
+.main-container{display:flex;height:calc(100vh - 60px)}
+.sidebar{width:280px;background:var(--bg);border-right:1px solid #30363d;display:flex;flex-direction:column}
+.file-explorer{padding:16px;border-bottom:1px solid #30363d}
+.explorer-title{font-size:14px;font-weight:600;color:#f0f6fc;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.file-list{list-style:none;max-height:220px;overflow:auto}
+.file-item{padding:6px 8px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;transition:background .15s}
+.file-item:hover{background:#21262d}
+.file-item.active{background:var(--accent);color:#fff}
+.file-icon{width:16px;height:16px;display:flex;align-items:center;justify-content:center}
+
+/* templates */
+.templates{padding:16px;flex:1}
+.templates-title{font-size:14px;font-weight:600;color:#f0f6fc;margin-bottom:12px}
+.template-item{padding:12px;background:var(--panel);border:1px solid #30363d;border-radius:6px;margin-bottom:8px;cursor:pointer;transition:all .12s}
+.template-item:hover{border-color:#8b949e;background:#21262d}
+.template-name{font-weight:500;font-size:14px;margin-bottom:4px}
+.template-desc{font-size:12px;color:var(--muted)}
+
+/* editor area */
+.editor-container{flex:1;display:flex;flex-direction:column}
+.tabs{background:var(--panel);border-bottom:1px solid #30363d;display:flex;align-items:center;padding:0 16px;min-height:48px}
+.tab{padding:8px 16px;background:transparent;border:none;color:var(--muted);font-size:14px;cursor:pointer;border-radius:6px 6px 0 0;display:flex;align-items:center;gap:8px}
+.tab.active{background:var(--bg);color:var(--text);border-bottom:2px solid var(--accent)}
+.tab:hover:not(.active){background:#21262d;color:var(--text)}
+
+.editor-panes{flex:1;display:flex}
+.editor-pane{flex:1;display:none;flex-direction:column}
+.editor-pane.active{display:flex}
+.editor-with-numbers{display:flex;flex:1;min-height:0}
+.line-numbers{background:var(--bg);color:#6e7681;padding:20px 8px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.5;text-align:right;border-right:1px solid #21262d;user-select:none;min-width:50px;overflow:auto}
+.code-editor{flex:1;background:var(--bg);font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.5;border:none;outline:none;resize:none;padding:20px;color:var(--text);tab-size:2;min-height:0}
+.code-editor::placeholder{color:#6e7681}
+
+/* preview */
+.preview-container{width:50%;background:#ffffff;border-left:1px solid #30363d;display:flex;flex-direction:column}
+.preview-header{background:#f6f8fa;border-bottom:1px solid #d0d7de;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.preview-title{font-size:14px;font-weight:600;color:#24292f}
+.preview-actions{display:flex;gap:8px}
+.preview-btn{background:#ffffff;border:1px solid #d0d7de;color:#24292f;padding:4px 8px;border-radius:4px;font-size:12px;cursor:pointer}
+.preview-btn:hover{background:#f3f4f6}
+.preview-frame{flex:1;border:none;background:#fff}
+
+/* status bar */
+.status-bar{background:var(--panel);border-top:1px solid #30363d;padding:6px 16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+
+/* responsive */
+@media (max-width:960px){
+  .preview-container{display:none}
+  .sidebar{width:240px}
+  .main-container{flex-direction:column}
+}
+</style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">
-            <div class="logo-icon">⚡</div>
-            CodeHub
+  <div class="header">
+    <div class="logo"><div class="logo-icon">⚡</div>CodeHub</div>
+    <div class="header-actions">
+      <button class="btn" onclick="saveProject()">💾 저장</button>
+      <button class="btn" onclick="shareProject()">🔗 공유</button>
+      <button class="btn btn-primary" onclick="runCode()">▶️ 실행</button>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="sidebar">
+      <div class="file-explorer">
+        <div class="explorer-title">
+          파일 탐색기
+          <button class="btn" style="padding:2px 6px;font-size:12px" onclick="addNewFile()">+</button>
         </div>
-        <div class="header-actions">
-            <button class="btn" onclick="saveProject()">
-                💾 저장
-            </button>
-            <button class="btn" onclick="shareProject()">
-                🔗 공유
-            </button>
-            <button class="btn btn-primary" onclick="runCode()">
-                ▶️ 실행
-            </button>
+        <ul class="file-list" id="fileList">
+          <li class="file-item active" data-file="html"><span class="file-icon">🌐</span>index.html</li>
+          <li class="file-item" data-file="css"><span class="file-icon">🎨</span>style.css</li>
+          <li class="file-item" data-file="js"><span class="file-icon">⚡</span>script.js</li>
+        </ul>
+      </div>
+
+      <div class="templates">
+        <div class="templates-title">템플릿</div>
+
+        <div class="template-item" onclick="loadTemplate('basic')">
+          <div class="template-name">기본 웹페이지</div>
+          <div class="template-desc">HTML, CSS, JS 기본 구조</div>
         </div>
+
+        <div class="template-item" onclick="loadTemplate('portfolio')">
+          <div class="template-name">포트폴리오</div>
+          <div class="template-desc">개인 포트폴리오 사이트</div>
+        </div>
+
+        <div class="template-item" onclick="loadTemplate('dashboard')">
+          <div class="template-name">대시보드</div>
+          <div class="template-desc">관리자 대시보드 UI</div>
+        </div>
+
+        <div class="template-item" onclick="loadTemplate('game')">
+          <div class="template-name">간단한 게임</div>
+          <div class="template-desc">JavaScript 미니게임</div>
+        </div>
+      </div>
     </div>
 
-    <div class="main-container">
-        <div class="sidebar">
-            <div class="file-explorer">
-                <div class="explorer-title">
-                    파일 탐색기
-                    <button class="btn" style="padding: 2px 6px; font-size: 12px;" onclick="addNewFile()">+</button>
-                </div>
-                <ul class="file-list" id="fileList">
-                    <li class="file-item active" data-file="html">
-                        <span class="file-icon">🌐</span>
-                        index.html
-                    </li>
-                    <li class="file-item" data-file="css">
-                        <span class="file-icon">🎨</span>
-                        style.css
-                    </li>
-                    <li class="file-item" data-file="js">
-                        <span class="file-icon">⚡</span>
-                        script.js
-                    </li>
-                </ul>
-            </div>
-            
-            <div class="templates">
-                <div class="templates-title">템플릿</div>
-                <div class="template-item" onclick="loadTemplate('basic')">
-                    <div class="template-name">기본 웹페이지</div>
-                    <div class="template-desc">HTML, CSS, JS 기본 구조</div>
-                </div>
-                <div class="template-item" onclick="loadTemplate('portfolio')">
-                    <div class="template-name">포트폴리오</div>
-                    <div class="template-desc">개인 포트폴리오 사이트</div>
-                </div>
-                <div class="template-item" onclick="loadTemplate('dashboard')">
-                    <div class="template-name">대시보드</div>
-                    <div class="template-desc">관리자 대시보드 UI</div>
-                </div>
-                <div class="template-item" onclick="loadTemplate('game')">
-                    <div class="template-name">간단한 게임</div>
-                    <div class="template-desc">JavaScript 미니게임</div>
-                </div>
-            </div>
-        </div>
+    <div class="editor-container">
+      <div class="tabs">
+        <button class="tab active" data-tab="html">🌐 HTML</button>
+        <button class="tab" data-tab="css">🎨 CSS</button>
+        <button class="tab" data-tab="js">⚡ JavaScript</button>
+      </div>
 
-        <div class="editor-container">
-            <div class="tabs">
-                <button class="tab active" data-tab="html">
-                    🌐 HTML
-                </button>
-                <button class="tab" data-tab="css">
-                    🎨 CSS
-                </button>
-                <button class="tab" data-tab="js">
-                    ⚡ JavaScript
-                </button>
-            </div>
-
-            <div class="editor-panes">
-                <div class="editor-pane active" id="htmlPane">
-                    <div class="editor-with-numbers">
-                        <div class="line-numbers" id="htmlLineNumbers">1</div>
-                        <textarea class="code-editor" id="htmlEditor" placeholder="HTML 코드를 입력하세요..."><!DOCTYPE html>
+      <div class="editor-panes">
+        <div class="editor-pane active" id="htmlPane">
+          <div class="editor-with-numbers">
+            <div class="line-numbers" id="htmlLineNumbers">1</div>
+            <textarea class="code-editor" id="htmlEditor" placeholder="HTML 코드를 입력하세요..."><!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내 웹사이트</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>내 웹사이트</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>안녕하세요! 👋</h1>
-        <p>여기서 멋진 웹사이트를 만들어보세요!</p>
-        <button onclick="sayHello()">클릭해보세요</button>
-    </div>
-    <script src="script.js"></script>
+  <div class="container">
+    <h1>안녕하세요! 👋</h1>
+    <p>여기서 멋진 웹사이트를 만들어보세요!</p>
+    <button onclick="sayHello()">클릭해보세요</button>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html></textarea>
-                    </div>
-                </div>
+          </div>
+        </div>
 
-                <div class="editor-pane" id="cssPane">
-                    <div class="editor-with-numbers">
-                        <div class="line-numbers" id="cssLineNumbers">1</div>
-                        <textarea class="code-editor" id="cssEditor" placeholder="CSS 코드를 입력하세요...">body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+        <div class="editor-pane" id="cssPane">
+          <div class="editor-with-numbers">
+            <div class="line-numbers" id="cssLineNumbers">1</div>
+            <textarea class="code-editor" id="cssEditor" placeholder="CSS 코드를 입력하세요...">body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-
 .container {
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    text-align: center;
-    max-width: 500px;
+  background:white;padding:40px;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,0.1);text-align:center;max-width:500px;
 }
-
-h1 {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 2.5rem;
-}
-
-p {
-    color: #666;
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-}
-
-button {
-    background: #667eea;
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 25px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-button:hover {
-    background: #764ba2;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}</textarea>
-                    </div>
-                </div>
-
-                <div class="editor-pane" id="jsPane">
-                    <div class="editor-with-numbers">
-                        <div class="line-numbers" id="jsLineNumbers">1</div>
-                        <textarea class="code-editor" id="jsEditor" placeholder="JavaScript 코드를 입력하세요...">function sayHello() {
-    alert('안녕하세요! CodeHub에 오신 것을 환영합니다! 🎉');
-    
-    // 버튼 텍스트 변경
-    const button = document.querySelector('button');
-    button.textContent = '다시 클릭해보세요! ✨';
-    
-    // 배경색 랜덤 변경
-    const colors = [
-        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-        'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-        'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
-    ];
-    
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    document.body.style.background = randomColor;
-}
-
-// 페이지 로드 시 실행
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('CodeHub가 준비되었습니다! 🚀');
-});</textarea>
-                    </div>
-                </div>
-            </div>
+h1{color:#333;margin-bottom:20px;font-size:2.5rem}
+p{color:#666;font-size:1.2rem;margin-bottom:30px}
+button{background:#667eea;color:white;border:none;padding:15px 30px;border-radius:25px;font-size:1.1rem;cursor:pointer;transition:all .3s}
+button:hover{background:#764ba2;transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,0.2)}</textarea>
+          </div>
         </div>
 
-        <div class="preview-container">
-            <div class="preview-header">
-                <div class="preview-title">미리보기</div>
-                <div class="preview-actions">
-                    <button class="preview-btn" onclick="refreshPreview()">🔄</button>
-                    <button class="preview-btn" onclick="openInNewTab()">🔗</button>
-                </div>
-            </div>
-            <iframe class="preview-frame" id="previewFrame"></iframe>
+        <div class="editor-pane" id="jsPane">
+          <div class="editor-with-numbers">
+            <div class="line-numbers" id="jsLineNumbers">1</div>
+            <textarea class="code-editor" id="jsEditor" placeholder="JavaScript 코드를 입력하세요...">function sayHello(){
+  alert('안녕하세요! CodeHub에 오신 것을 환영합니다! 🎉');
+  const button = document.querySelector('button');
+  if(button) button.textContent = '다시 클릭해보세요! ✨';
+  const colors = [
+    'linear-gradient(135deg,#667eea 0%,#764ba2 100%)',
+    'linear-gradient(135deg,#f093fb 0%,#f5576c 100%)',
+    'linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)',
+    'linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)'
+  ];
+  document.body.style.background = colors[Math.floor(Math.random()*colors.length)];
+}
+document.addEventListener('DOMContentLoaded',function(){console.log('CodeHub ready 🚀')});</textarea>
+          </div>
         </div>
+      </div>
     </div>
 
-    <div class="status-bar">
-        <div>준비됨 ✅</div>
-        <div id="statusInfo">HTML | 라인 1, 열 1</div>
+    <div class="preview-container">
+      <div class="preview-header">
+        <div class="preview-title">미리보기</div>
+        <div class="preview-actions">
+          <button class="preview-btn" onclick="refreshPreview()">🔄</button>
+          <button class="preview-btn" onclick="openInNewTab()">🔗</button>
+        </div>
+      </div>
+      <iframe class="preview-frame" id="previewFrame" sandbox="allow-same-origin allow-scripts"></iframe>
     </div>
+  </div>
 
-    <script>
-        let currentFile = 'html';
-        let files = {
-            html: document.getElementById('htmlEditor').value,
-            css: document.getElementById('cssEditor').value,
-            js: document.getElementById('jsEditor').value
-        };
+  <div class="status-bar">
+    <div>준비됨 ✅</div>
+    <div id="statusInfo">HTML | 라인 1</div>
+  </div>
 
-        // 탭 전환
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabType = tab.dataset.tab;
-                switchTab(tabType);
-            });
-        });
-
-        // 파일 전환
-        document.querySelectorAll('.file-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const fileType = item.dataset.file;
-                switchTab(fileType);
-                
-                // 활성 파일 표시
-                document.querySelectorAll('.file-item').forEach(f => f.classList.remove('active'));
-                item.classList.add('active');
-            });
-        });
-
-        function switchTab(tabType) {
-            // 현재 파일 내용 저장
-            saveCurrentFile();
-            
-            // 탭 활성화
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`[data-tab="${tabType}"]`).classList.add('active');
-            
-            // 패널 전환
-            document.querySelectorAll('.editor-pane').forEach(p => p.classList.remove('active'));
-            document.getElementById(`${tabType}Pane`).classList.add('active');
-            
-            currentFile = tabType;
-            
-            // 파일 내용 로드
-            loadFileContent(tabType);
-            updateLineNumbers(tabType);
-        }
-
-        function saveCurrentFile() {
-            const editor = document.getElementById(`${currentFile}Editor`);
-            files[currentFile] = editor.value;
-        }
-
-        function loadFileContent(fileType) {
-            const editor = document.getElementById(`${fileType}Editor`);
-            editor.value = files[fileType];
-        }
-
-        // 라인 번호 업데이트
-        function updateLineNumbers(fileType) {
-            const editor = document.getElementById(`${fileType}Editor`);
-            const lineNumbers = document.getElementById(`${fileType}LineNumbers`);
-            
-            const lines = editor.value.split('\n').length;
-            let numbers = '';
-            for (let i = 1; i <= lines; i++) {
-                numbers += i + '\n';
-            }
-            lineNumbers.textContent = numbers;
-        }
-
-        // 에디터 이벤트 리스너
-        ['html', 'css', 'js'].forEach(type => {
-            const editor = document.getElementById(`${type}Editor`);
-            
-            editor.addEventListener('input', () => {
-                updateLineNumbers(type);
-                files[type] = editor.value;
-                
-                // 자동 미리보기 업데이트 (디바운스)
-                clearTimeout(window.previewTimeout);
-                window.previewTimeout = setTimeout(updatePreview, 500);
-            });
-            
-            editor.addEventListener('scroll', () => {
-                const lineNumbers = document.getElementById(`${type}LineNumbers`);
-                lineNumbers.scrollTop = editor.scrollTop;
-            });
-        });
-
-        function runCode() {
-            updatePreview();
-        }
-
-        function updatePreview() {
-            const html = files.html;
-            const css = files.css;
-            const js = files.js;
-            
-            // CSS와 JS를 HTML에 인라인으로 삽입
-            let fullHTML = html;
-            
-            // CSS 삽입
-            if (fullHTML.includes('<link rel="stylesheet" href="style.css">')) {
-                fullHTML = fullHTML.replace(
-                    '<link rel="stylesheet" href="style.css">',
-                    `<style>${css}</style>`
-                );
-            } else if (fullHTML.includes('</head>')) {
-                fullHTML = fullHTML.replace('</head>', `<style>${css}</style></head>`);
-            }
-            
-            // JS 삽입
-            if (fullHTML.includes('<script src="script.js"></script>')) {
-                fullHTML = fullHTML.replace(
-                    '<script src="script.js"></script>',
-                    `<script>${js}</script>`
-                );
-            } else if (fullHTML.includes('<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9810af7e3033eaa6',t:'MTc1ODE5Njg1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>')) {
-                fullHTML = fullHTML.replace('</body>', `<script>${js}</script></body>`);
-            }
-            
-            const iframe = document.getElementById('previewFrame');
-            const blob = new Blob([fullHTML], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            iframe.src = url;
-            
-            // 메모리 정리
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-        }
-
-        function refreshPreview() {
-            updatePreview();
-        }
-
-        function openInNewTab() {
-            const html = files.html;
-            const css = files.css;
-            const js = files.js;
-            
-            // CSS와 JS를 HTML에 인라인으로 삽입
-            let fullHTML = html;
-            
-            // CSS 삽입
-            if (fullHTML.includes('<link rel="stylesheet" href="style.css">')) {
-                fullHTML = fullHTML.replace(
-                    '<link rel="stylesheet" href="style.css">',
-                    `<style>${css}</style>`
-                );
-            } else if (fullHTML.includes('</head>')) {
-                fullHTML = fullHTML.replace('</head>', `<style>${css}</style></head>`);
-            }
-            
-            // JS 삽입
-            if (fullHTML.includes('<script src="script.js"></script>')) {
-                fullHTML = fullHTML.replace(
-                    '<script src="script.js"></script>',
-                    `<script>${js}</script>`
-                );
-            } else if (fullHTML.includes('</body>')) {
-                fullHTML = fullHTML.replace('</body>', `<script>${js}</script></body>`);
-            }
-            
-            const blob = new Blob([fullHTML], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            window.open(url, '_blank');
-            
-            // 메모리 정리
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-        }
-
-        function saveProject() {
-            const project = {
-                html: files.html,
-                css: files.css,
-                js: files.js,
-                timestamp: new Date().toISOString()
-            };
-            
-            const blob = new Blob([JSON.stringify(project, null, 2)], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'codehub-project.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function shareProject() {
-            const project = {
-                html: files.html,
-                css: files.css,
-                js: files.js
-            };
-            
-            const encoded = btoa(JSON.stringify(project));
-            const shareUrl = `${window.location.origin}${window.location.pathname}?project=${encoded}`;
-            
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                alert('프로젝트 링크가 클립보드에 복사되었습니다! 🎉');
-            });
-        }
-
-        function loadTemplate(templateType) {
-            const templates = {
-                basic: {
-                    html: `<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>기본 웹페이지</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <h1>내 웹사이트</h1>
-        <nav>
-            <a href="#home">홈</a>
-            <a href="#about">소개</a>
-            <a href="#contact">연락처</a>
-        </nav>
-    </header>
-    
-    <main>
-        <section id="home">
-            <h2>환영합니다! 👋</h2>
-            <p>이곳에서 멋진 웹사이트를 만들어보세요.</p>
-        </section>
-    </main>
-    
-    <script src="script.js"></script>
-</body>
-</html>`,
-                    css: `* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    color: #333;
-}
-
-header {
-    background: #2c3e50;
-    color: white;
-    padding: 1rem 0;
-    text-align: center;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    margin: 0 1rem;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background 0.3s;
-}
-
-nav a:hover {
-    background: rgba(255,255,255,0.1);
-}
-
-main {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-section {
-    margin: 2rem 0;
-    padding: 2rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-}`,
-                    js: `document.addEventListener('DOMContentLoaded', function() {
-    console.log('웹사이트가 로드되었습니다!');
-    
-    // 네비게이션 클릭 이벤트
-    document.querySelectorAll('nav a').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = this.getAttribute('href');
-            console.log('클릭된 메뉴:', target);
-        });
-    });
-});`
-                },
-                portfolio: {
-                    html: `<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내 포트폴리오</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="hero">
-        <div class="hero-content">
-            <h1>안녕하세요, 저는 <span class="highlight">개발자</span>입니다</h1>
-            <p>창의적이고 혁신적인 웹 경험을 만듭니다</p>
-            <button class="cta-btn" onclick="scrollToProjects()">프로젝트 보기</button>
-        </div>
-    </div>
-    
-    <section id="projects" class="projects">
-        <h2>프로젝트</h2>
-        <div class="project-grid">
-            <div class="project-card">
-                <h3>프로젝트 1</h3>
-                <p>멋진 웹 애플리케이션</p>
-            </div>
-            <div class="project-card">
-                <h3>프로젝트 2</h3>
-                <p>반응형 웹사이트</p>
-            </div>
-        </div>
-    </section>
-    
-    <script src="script.js"></script>
-</body>
-</html>`,
-                    css: `* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-}
-
-.hero {
-    height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
-}
-
-.hero-content h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.highlight {
-    color: #ffd700;
-}
-
-.cta-btn {
-    background: #ffd700;
-    color: #333;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 25px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    margin-top: 2rem;
-    transition: transform 0.3s;
-}
-
-.cta-btn:hover {
-    transform: translateY(-2px);
-}
-
-.projects {
-    padding: 4rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.projects h2 {
-    text-align: center;
-    margin-bottom: 3rem;
-    font-size: 2.5rem;
-}
-
-.project-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.project-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    transition: transform 0.3s;
-}
-
-.project-card:hover {
-    transform: translateY(-5px);
-}`,
-                    js: `function scrollToProjects() {
-    document.getElementById('projects').scrollIntoView({
-        behavior: 'smooth'
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // 프로젝트 카드 애니메이션
-    const cards = document.querySelectorAll('.project-card');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    });
-    
-    cards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.6s, transform 0.6s';
-        observer.observe(card);
-    });
-});`
-                },
-                dashboard: {
-                    html: `<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>관리자 대시보드</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="dashboard">
-        <aside class="sidebar">
-            <div class="logo">📊 Dashboard</div>
-            <nav class="nav">
-                <a href="#" class="nav-item active">대시보드</a>
-                <a href="#" class="nav-item">사용자</a>
-                <a href="#" class="nav-item">분석</a>
-                <a href="#" class="nav-item">설정</a>
-            </nav>
-        </aside>
-        
-        <main class="main-content">
-            <header class="header">
-                <h1>대시보드</h1>
-                <div class="user-info">관리자님 환영합니다!</div>
-            </header>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>총 사용자</h3>
-                    <div class="stat-number">1,234</div>
-                </div>
-                <div class="stat-card">
-                    <h3>월간 방문자</h3>
-                    <div class="stat-number">5,678</div>
-                </div>
-                <div class="stat-card">
-                    <h3>수익</h3>
-                    <div class="stat-number">₩1,234,567</div>
-                </div>
-            </div>
-            
-            <div class="chart-container">
-                <h3>월별 통계</h3>
-                <div class="chart" id="chart"></div>
-            </div>
-        </main>
-    </div>
-    
-    <script src="script.js"></script>
-</body>
-</html>`,
-                    css: `* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
-    background: #f5f5f5;
-}
-
-.dashboard {
-    display: flex;
-    height: 100vh;
-}
-
-.sidebar {
-    width: 250px;
-    background: #2c3e50;
-    color: white;
-    padding: 2rem 0;
-}
-
-.logo {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 2rem;
-    padding: 0 1rem;
-}
-
-.nav-item {
-    display: block;
-    color: white;
-    text-decoration: none;
-    padding: 1rem 2rem;
-    transition: background 0.3s;
-}
-
-.nav-item:hover,
-.nav-item.active {
-    background: #34495e;
-}
-
-.main-content {
-    flex: 1;
-    padding: 2rem;
-    overflow-y: auto;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #ddd;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.stat-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #3498db;
-    margin-top: 0.5rem;
-}
-
-.chart-container {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.chart {
-    height: 300px;
-    background: linear-gradient(45deg, #3498db, #2ecc71);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.2rem;
-}`,
-                    js: `document.addEventListener('DOMContentLoaded', function() {
-    // 네비게이션 활성화
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // 모든 항목에서 active 클래스 제거
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('active');
-            });
-            
-            // 클릭된 항목에 active 클래스 추가
-            this.classList.add('active');
-        });
-    });
-    
-    // 간단한 차트 시뮬레이션
-    const chart = document.getElementById('chart');
-    chart.innerHTML = '📈 여기에 실제 차트가 표시됩니다';
-    
-    // 실시간 데이터 업데이트 시뮬레이션
-    setInterval(() => {
-        const statNumbers = document.querySelectorAll('.stat-number');
-        statNumbers.forEach(stat => {
-            const currentValue = parseInt(stat.textContent.replace(/[^0-9]/g, ''));
-            const newValue = currentValue + Math.floor(Math.random() * 10);
-            
-            if (stat.textContent.includes('₩')) {
-                stat.textContent = '₩' + newValue.toLocaleString();
-            } else {
-                stat.textContent = newValue.toLocaleString();
-            }
-        });
-    }, 5000);
-});`
-                },
-                game: {
-                    html: `<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>벽돌깨기 게임</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="game-container">
-        <div class="game-header">
-            <h1>🎮 벽돌깨기 게임</h1>
-            <div class="score">점수: <span id="score">0</span></div>
-        </div>
-        
-        <canvas id="gameCanvas" width="800" height="400"></canvas>
-        
-        <div class="game-controls">
-            <button id="startBtn" onclick="startGame()">게임 시작</button>
-            <button id="pauseBtn" onclick="pauseGame()">일시정지</button>
-            <button id="resetBtn" onclick="resetGame()">다시시작</button>
-        </div>
-        
-        <div class="instructions">
-            <h3>게임 방법</h3>
-            <p>← → 화살표 키 또는 마우스로 패들을 움직여 공을 튕겨보세요!</p>
-        </div>
-    </div>
-    
-    <script src="script.js"></script>
-</body>
-</html>`,
-                    css: `body {
-    margin: 0;
-    padding: 20px;
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.game-container {
-    text-align: center;
-    background: rgba(255,255,255,0.1);
-    padding: 30px;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
-
-.game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.game-header h1 {
-    margin: 0;
-    font-size: 2rem;
-}
-
-.score {
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-#gameCanvas {
-    border: 3px solid white;
-    border-radius: 10px;
-    background: #000;
-    margin: 20px 0;
-}
-
-.game-controls {
-    margin: 20px 0;
-}
-
-.game-controls button {
-    background: #ff6b6b;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    margin: 0 10px;
-    border-radius: 25px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.game-controls button:hover {
-    background: #ff5252;
-    transform: translateY(-2px);
-}
-
-.instructions {
-    margin-top: 20px;
-    padding: 20px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
-}
-
-.instructions h3 {
-    margin-bottom: 10px;
-}`,
-                    js: `const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-let game = {
-    running: false,
-    score: 0,
-    ball: {
-        x: canvas.width / 2,
-        y: canvas.height - 50,
-        dx: 3,
-        dy: -3,
-        radius: 10
-    },
-    paddle: {
-        x: canvas.width / 2 - 50,
-        y: canvas.height - 20,
-        width: 100,
-        height: 10
-    },
-    bricks: []
+<script>
+/* ----------------- 내부 상태 ----------------- */
+let currentFile = 'html';
+let files = {
+  html: document.getElementById('htmlEditor').value,
+  css: document.getElementById('cssEditor').value,
+  js: document.getElementById('jsEditor').value
 };
 
-// 벽돌 생성
-function createBricks() {
-    game.bricks = [];
-    for (let row = 0; row < 5; row++) {
-        for (let col = 0; col < 10; col++) {
-            game.bricks.push({
-                x: col * 80 + 10,
-                y: row * 30 + 30,
-                width: 70,
-                height: 20,
-                visible: true
-            });
-        }
-    }
+/* ----------------- 유틸: 라인 번호 갱신 ----------------- */
+function updateLineNumbers(fileType){
+  const editor = document.getElementById(`${fileType}Editor`);
+  const lineNumbers = document.getElementById(`${fileType}LineNumbers`);
+  const lines = Math.max(1, editor.value.split('\n').length);
+  let numbers = '';
+  for(let i=1;i<=lines;i++) numbers += i + '\n';
+  lineNumbers.textContent = numbers;
 }
 
-// 게임 그리기
-function draw() {
-    // 캔버스 지우기
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // 공 그리기
-    ctx.beginPath();
-    ctx.arc(game.ball.x, game.ball.y, game.ball.radius, 0, Math.PI * 2);
-    ctx.fillStyle = '#ff6b6b';
-    ctx.fill();
-    ctx.closePath();
-    
-    // 패들 그리기
-    ctx.beginPath();
-    ctx.rect(game.paddle.x, game.paddle.y, game.paddle.width, game.paddle.height);
-    ctx.fillStyle = '#4ecdc4';
-    ctx.fill();
-    ctx.closePath();
-    
-    // 벽돌 그리기
-    game.bricks.forEach(brick => {
-        if (brick.visible) {
-            ctx.beginPath();
-            ctx.rect(brick.x, brick.y, brick.width, brick.height);
-            ctx.fillStyle = '#45b7d1';
-            ctx.fill();
-            ctx.closePath();
-        }
-    });
+/* ----------------- 탭/파일 전환 ----------------- */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    const tabType = tab.dataset.tab;
+    switchTab(tabType);
+  });
+});
+function switchTab(tabType){
+  saveCurrentFile();
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector(`[data-tab="${tabType}"]`).classList.add('active');
+  document.querySelectorAll('.editor-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`${tabType}Pane`).classList.add('active');
+  currentFile = tabType;
+  loadFileContent(tabType);
+  updateLineNumbers(tabType);
+  updateStatus();
 }
 
-// 게임 업데이트
-function update() {
-    if (!game.running) return;
-    
-    // 공 이동
-    game.ball.x += game.ball.dx;
-    game.ball.y += game.ball.dy;
-    
-    // 벽 충돌
-    if (game.ball.x + game.ball.radius > canvas.width || game.ball.x - game.ball.radius < 0) {
-        game.ball.dx = -game.ball.dx;
-    }
-    
-    if (game.ball.y - game.ball.radius < 0) {
-        game.ball.dy = -game.ball.dy;
-    }
-    
-    // 패들 충돌
-    if (game.ball.y + game.ball.radius > game.paddle.y &&
-        game.ball.x > game.paddle.x &&
-        game.ball.x < game.paddle.x + game.paddle.width) {
-        game.ball.dy = -game.ball.dy;
-    }
-    
-    // 벽돌 충돌
-    game.bricks.forEach(brick => {
-        if (brick.visible &&
-            game.ball.x > brick.x &&
-            game.ball.x < brick.x + brick.width &&
-            game.ball.y > brick.y &&
-            game.ball.y < brick.y + brick.height) {
-            brick.visible = false;
-            game.ball.dy = -game.ball.dy;
-            game.score += 10;
-            document.getElementById('score').textContent = game.score;
-        }
-    });
-    
-    // 게임 오버
-    if (game.ball.y + game.ball.radius > canvas.height) {
-        game.running = false;
-        alert('게임 오버! 점수: ' + game.score);
-    }
-    
-    // 승리 조건
-    if (game.bricks.every(brick => !brick.visible)) {
-        game.running = false;
-        alert('축하합니다! 모든 벽돌을 깨뜨렸습니다! 점수: ' + game.score);
-    }
-}
-
-// 게임 루프
-function gameLoop() {
-    update();
-    draw();
-    requestAnimationFrame(gameLoop);
-}
-
-// 게임 시작
-function startGame() {
-    game.running = true;
-    createBricks();
-}
-
-// 게임 일시정지
-function pauseGame() {
-    game.running = !game.running;
-}
-
-// 게임 리셋
-function resetGame() {
-    game.running = false;
-    game.score = 0;
-    game.ball.x = canvas.width / 2;
-    game.ball.y = canvas.height - 50;
-    game.ball.dx = 3;
-    game.ball.dy = -3;
-    document.getElementById('score').textContent = '0';
-    createBricks();
-}
-
-// 키보드 이벤트
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft' && game.paddle.x > 0) {
-        game.paddle.x -= 20;
-    }
-    if (e.key === 'ArrowRight' && game.paddle.x < canvas.width - game.paddle.width) {
-        game.paddle.x += 20;
-    }
+/* 파일 탐색기 클릭 처리 */
+document.querySelectorAll('.file-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    const fileType = item.dataset.file;
+    // 탭도 전환
+    switchTab(fileType);
+    document.querySelectorAll('.file-item').forEach(f=>f.classList.remove('active'));
+    item.classList.add('active');
+  });
 });
 
-// 마우스 이벤트
-canvas.addEventListener('mousemove', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    game.paddle.x = mouseX - game.paddle.width / 2;
-    
-    // 패들이 캔버스 밖으로 나가지 않도록
-    if (game.paddle.x < 0) game.paddle.x = 0;
-    if (game.paddle.x > canvas.width - game.paddle.width) {
-        game.paddle.x = canvas.width - game.paddle.width;
-    }
+/* ----------------- 편집기 이벤트 바인딩 ----------------- */
+['html','css','js'].forEach(type=>{
+  const editor = document.getElementById(`${type}Editor`);
+  editor.addEventListener('input', ()=>{
+    files[type] = editor.value;
+    updateLineNumbers(type);
+    // 디바운스 미리보기 갱신
+    clearTimeout(window.previewTimeout);
+    window.previewTimeout = setTimeout(updatePreview, 500);
+  });
+  editor.addEventListener('scroll', ()=> {
+    document.getElementById(`${type}LineNumbers`).scrollTop = editor.scrollTop;
+  });
 });
 
-// 초기화
-createBricks();
-gameLoop();`
-                }
-            };
-            
-            if (templates[templateType]) {
-                files = templates[templateType];
-                
-                // 에디터에 템플릿 로드
-                document.getElementById('htmlEditor').value = files.html;
-                document.getElementById('cssEditor').value = files.css;
-                document.getElementById('jsEditor').value = files.js;
-                
-                // 라인 번호 업데이트
-                updateLineNumbers('html');
-                updateLineNumbers('css');
-                updateLineNumbers('js');
-                
-                // 미리보기 업데이트
-                updatePreview();
-            }
-        }
+/* ----------------- 파일 저장/로드 ----------------- */
+function saveCurrentFile(){
+  const editor = document.getElementById(`${currentFile}Editor`);
+  files[currentFile] = editor.value;
+}
+function loadFileContent(fileType){
+  document.getElementById(`${fileType}Editor`).value = files[fileType] || '';
+}
 
-        // 초기 미리보기 로드
-        updatePreview();
-        
-        // URL에서 프로젝트 로드
-        const urlParams = new URLSearchParams(window.location.search);
-        const projectData = urlParams.get('project');
-        if (projectData) {
-            try {
-                const project = JSON.parse(atob(projectData));
-                files = project;
-                
-                document.getElementById('htmlEditor').value = files.html;
-                document.getElementById('cssEditor').value = files.css;
-                document.getElementById('jsEditor').value = files.js;
-                
-                updateLineNumbers('html');
-                updateLineNumbers('css');
-                updateLineNumbers('js');
-                updatePreview();
-            } catch (e) {
-                console.error('프로젝트 로드 실패:', e);
-            }
-        }
-    </script>
+/* ----------------- 미리보기 생성(안전하게) ----------------- */
+function buildFullHTML(){
+  let html = files.html || '';
+  const css = files.css || '';
+  const js = files.js || '';
+
+  // CSS 삽입: 기존 link 교체 또는 head 끝에 삽입
+  if(html.includes('<link rel="stylesheet" href="style.css">')){
+    html = html.replace('<link rel="stylesheet" href="style.css">', `<style>${css}</style>`);
+  } else if(html.includes('</head>')){
+    html = html.replace('</head>', `<style>${css}</style></head>`);
+  } else {
+    // 헤드가 없으면 앞에 추가
+    html = `<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${'<style>'+css+'</style>'}</head>` + html;
+  }
+
+  // JS 삽입: 기존 script tag 교체 또는 body 끝에 삽입
+  if(html.includes('<script src="script.js"></script>')){
+    html = html.replace('<script src="script.js"></script>', `<script>${js}</script>`);
+  } else if(html.includes('</body>')){
+    html = html.replace('</body>', `<script>${js}<\/script></body>`);
+  } else {
+    html += `<script>${js}<\/script>`;
+  }
+
+  return html;
+}
+
+function updatePreview(){
+  saveCurrentFile();
+  const fullHTML = buildFullHTML();
+  const iframe = document.getElementById('previewFrame');
+  // blob으로 주면 CSP/파일 경로 문제 덜 생김
+  const blob = new Blob([fullHTML], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  iframe.src = url;
+  // revoke (약간 시간 둠)
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+
+/* 새로고침 / 새탭 열기 */
+function refreshPreview(){ updatePreview(); }
+function openInNewTab(){
+  saveCurrentFile();
+  const fullHTML = buildFullHTML();
+  const blob = new Blob([fullHTML], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+
+/* ----------------- 프로젝트 저장(로컬 다운로드) ----------------- */
+function saveProject(){
+  saveCurrentFile();
+  const project = { html: files.html, css: files.css, js: files.js, timestamp: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(project, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'codehub-project.json'; document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* ----------------- 공유 (링크 생성, base64) ----------------- */
+function shareProject(){
+  saveCurrentFile();
+  try{
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(files))));
+    const shareUrl = `${location.origin}${location.pathname}?project=${encoded}`;
+    navigator.clipboard.writeText(shareUrl).then(()=>alert('프로젝트 링크가 클립보드에 복사되었습니다!'));
+  }catch(e){
+    alert('공유에 실패했습니다: ' + e.message);
+  }
+}
+
+/* ----------------- 템플릿 로드 (기능 정의 누락 문제 해결) ----------------- */
+function loadTemplate(templateType){
+  const templates = {
+    basic: {
+      html: `<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"><title>기본 웹페이지</title><link rel="stylesheet" href="style.css"></head><body><header><h1>내 웹사이트</h1></header><main><p>환영합니다!</p></main><script src="script.js"></script></body></html>`,
+      css: `body{font-family:Arial,sans-serif;margin:0;padding:0}header{background:#2c3e50;color:white;padding:1rem;text-align:center}`,
+      js: `document.addEventListener('DOMContentLoaded',function(){console.log('basic template loaded')});`
+    },
+    portfolio: {
+      html: `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"><title>포트폴리오</title><link rel="stylesheet" href="style.css"></head><body><section class="hero"><h1>포트폴리오</h1></section><script src="script.js"></script></body></html>`,
+      css: `body{font-family:Arial,sans-serif} .hero{height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}`,
+      js: `function scrollToProjects(){document.getElementById('projects')?.scrollIntoView({behavior:'smooth'})}`
+    },
+    dashboard: {
+      html: `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"><title>대시보드</title><link rel="stylesheet" href="style.css"></head><body><div class="dashboard"><h1>대시보드</h1></div><script src="script.js"></script></body></html>`,
+      css: `body{font-family:Arial,sans-serif;background:#f5f5f5}.dashboard{padding:2rem}`,
+      js: `console.log('dashboard template')`
+    },
+    game: {
+      html: `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"><title>미니 게임</title><link rel="stylesheet" href="style.css"></head><body><canvas id="gameCanvas" width="800" height="400"></canvas><script src="script.js"></script></body></html>`,
+      css: `body{margin:0;background:#111;color:#fff} canvas{display:block;margin:0 auto;background:#000;border:3px solid #333}`,
+      js: `const c=document.getElementById('gameCanvas');if(c){const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(10,10,50,50)}`
+    }
+  };
+
+  if(templates[templateType]){
+    files = templates[templateType];
+    document.getElementById('htmlEditor').value = files.html;
+    document.getElementById('cssEditor').value = files.css;
+    document.getElementById('jsEditor').value = files.js;
+    updateLineNumbers('html'); updateLineNumbers('css'); updateLineNumbers('js');
+    updatePreview();
+  } else {
+    alert('템플릿을 찾을 수 없습니다.');
+  }
+}
+
+/* ----------------- 새 파일 추가(간단) ----------------- */
+function addNewFile(){
+  const name = prompt('새 파일명 (html/css/js 중 하나 입력):', 'html');
+  if(!name) return;
+  if(!['html','css','js'].includes(name)) { alert('지원되지 않는 파일 타입입니다. html, css, js 중 선택하세요.'); return; }
+  // 탭 전환만 해줄게
+  switchTab(name);
+}
+
+/* ----------------- 실행관련(버튼) ----------------- */
+function runCode(){ updatePreview(); }
+
+/* ----------------- URL에서 프로젝트 로드 ----------------- */
+(function(){
+  const urlParams = new URLSearchParams(window.location.search);
+  const projectData = urlParams.get('project');
+  if(projectData){
+    try {
+      const p = JSON.parse(decodeURIComponent(escape(atob(projectData))));
+      if(p.html) files.html = p.html;
+      if(p.css) files.css = p.css;
+      if(p.js) files.js = p.js;
+      document.getElementById('htmlEditor').value = files.html;
+      document.getElementById('cssEditor').value = files.css;
+      document.getElementById('jsEditor').value = files.js;
+      updateLineNumbers('html'); updateLineNumbers('css'); updateLineNumbers('js');
+      updatePreview();
+    } catch(e){ console.error('프로젝트 로드 실패', e) }
+  } else {
+    // 초기 미리보기 로드
+    updatePreview();
+  }
+})();
+
+/* ----------------- 상태바 업데이트 ----------------- */
+function updateStatus(){
+  const lines = document.getElementById(`${currentFile}Editor`).value.split('\n').length;
+  document.getElementById('statusInfo').textContent = `${currentFile.toUpperCase()} | 라인 ${lines}`;
+}
+
+/* 초기 라인번호 세팅 */
+updateLineNumbers('html'); updateLineNumbers('css'); updateLineNumbers('js');
+</script>
 </body>
 </html>
